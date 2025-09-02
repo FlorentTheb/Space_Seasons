@@ -7,22 +7,23 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance;
     [SerializeField] private List<AudioSource> Musics;
     [SerializeField] private List<AudioSource> Sounds;
-    [SerializeField] private float fadeDuration = 1f;
-    private int currentMusicIndex;
-    private float CurrentMusicVolume;
-    private float CurrentSoundVolume;
+    [SerializeField] private float fadeFactor = .2f;
+    [SerializeField] private float TargetMusicVolume;
+    [SerializeField] private int currentMusicIndex = 0;
+    [SerializeField] private int targetMusicIndex = -1;
+    private int musicVolumeIn;
+    private int musicVolumeOut;
     private Coroutine fadeMusicRoutine;
 
     void Awake()
     {
-        currentMusicIndex = 0;
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            float vol = PlayerPrefs.GetFloat("Volume", 100f);
-            SetMusicVolume(vol);
+            float targetVolume = PlayerPrefs.GetFloat("Volume", 1f);
+            SetMusicVolume(targetVolume);
         }
         else
         {
@@ -32,50 +33,71 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        foreach (var music in Musics)
+        for (int i = 0; i < Musics.Count; i++)
         {
+            var music = Musics[i];
             music.loop = true;
+            if (i == currentMusicIndex)
+            {
+                music.Play();
+                music.volume = TargetMusicVolume;
+                targetMusicIndex = currentMusicIndex;
+            }
+            else
+            {
+                music.Stop();
+                music.volume = 0f;
+            }
         }
-        Musics[0].Play();
-        Musics[1].Stop();
     }
 
     public void SetMusicVolume(float newVolume)
     {
-        foreach (var music in Musics)
-        {
-            music.volume = newVolume;
-        }
-        CurrentMusicVolume = newVolume;
+        TargetMusicVolume = Mathf.Clamp01(newVolume);
+
+        for (int i = 0; i < Musics.Count; i++)
+            Musics[i].volume = (i == targetMusicIndex) ? TargetMusicVolume : 0f;
     }
 
     public void CrossfadeMusic(int newMusicIndex)
     {
-        if (fadeMusicRoutine != null)
-            StopCoroutine(fadeMusicRoutine);
+        if (newMusicIndex < 0 || newMusicIndex >= Musics.Count || newMusicIndex == targetMusicIndex)
+            return;
 
-        if (newMusicIndex != currentMusicIndex && newMusicIndex >= 0 && newMusicIndex < Musics.Count)
-            fadeMusicRoutine = StartCoroutine(FadeMusic(newMusicIndex));
+        currentMusicIndex = targetMusicIndex;
+        targetMusicIndex = newMusicIndex;
+
+        if (fadeMusicRoutine == null)
+            fadeMusicRoutine = StartCoroutine(FadeMusicRoutine());
     }
 
-    private IEnumerator FadeMusic(int newMusicIndex)
+    private IEnumerator FadeMusicRoutine()
     {
-        Musics[newMusicIndex].Play();
-
-        float time = 0f;
-        while (time < fadeDuration)
+        Debug.Log($"Coroutine started ! IndexStart : {currentMusicIndex} | IndexTarget : {targetMusicIndex}");
+        Debug.Log($"Volume max : {TargetMusicVolume} | targetVolume = {Musics[targetMusicIndex].volume} | currentVolume = {Musics[currentMusicIndex].volume} | ");
+        Musics[targetMusicIndex].Play();
+        while (Musics[targetMusicIndex].volume < TargetMusicVolume || Musics[currentMusicIndex].volume > 0f)
         {
-            float t = time / fadeDuration;
-            Musics[currentMusicIndex].volume = Mathf.Lerp(CurrentMusicVolume, 0f, t);
-            Musics[newMusicIndex].volume = Mathf.Lerp(0f, CurrentMusicVolume, t);
-            time += Time.deltaTime;
+            float delta = Time.timeScale > 0f ? Time.deltaTime : Time.unscaledDeltaTime;
+            if (Musics[targetMusicIndex].volume < TargetMusicVolume)
+            {
+                Musics[targetMusicIndex].volume += delta * fadeFactor;
+            }
+
+            if (Musics[targetMusicIndex].volume > TargetMusicVolume)
+                Musics[targetMusicIndex].volume = TargetMusicVolume;
+
+            if (Musics[currentMusicIndex].volume > 0f)
+            {
+                Musics[currentMusicIndex].volume -= delta * fadeFactor;
+            }
+
+            if (Musics[currentMusicIndex].volume < 0f)
+                Musics[currentMusicIndex].volume = 0;
+
             yield return null;
         }
-
-        Musics[currentMusicIndex].volume = 0f;
         Musics[currentMusicIndex].Stop();
-        Musics[newMusicIndex].volume = CurrentMusicVolume;
-
-        currentMusicIndex = newMusicIndex;
+        fadeMusicRoutine = null;
     }
 }

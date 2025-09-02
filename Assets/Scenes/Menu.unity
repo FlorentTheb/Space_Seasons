@@ -7537,7 +7537,10 @@ MonoBehaviour:
   - {fileID: 2098899018}
   - {fileID: 2098899019}
   Sounds: []
-  fadeDuration: 1
+  fadeFactor: 0.2
+  TargetMusicVolume: 0
+  currentMusicIndex: 0
+  targetMusicIndex: -1
 --- !u!4 &2098899017
 Transform:
   m_ObjectHideFlags: 0

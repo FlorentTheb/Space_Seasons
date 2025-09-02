@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,9 +19,21 @@ public class SceneController : MonoBehaviour
         }
     }
 
-    public void LoadScene(string sceneName)
+    public void LoadScene(string sceneName, int? musicIndex = null)
     {
-        SceneManager.LoadSceneAsync(sceneName);
+        StartCoroutine(LoadSceneAndMusic(sceneName, musicIndex));
+    }
+
+    private IEnumerator LoadSceneAndMusic(string sceneName, int? musicIndex)
+    {
+        var asyncOp = SceneManager.LoadSceneAsync(sceneName);
+        asyncOp.allowSceneActivation = true;
+
+        while (!asyncOp.isDone)
+            yield return null;
+
+        if (musicIndex.HasValue)
+            AudioManager.Instance.CrossfadeMusic(musicIndex.Value);
     }
 
     public void LoadGameOver()
@@ -30,14 +43,12 @@ public class SceneController : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        LoadScene("Menu");
-        AudioManager.Instance.CrossfadeMusic(0);
+        LoadScene("Menu", 0);
     }
 
     public void RestartGame()
     {
         ScoreManager.Instance.ResetScore();
-        AudioManager.Instance.CrossfadeMusic(1);
-        LoadScene("Game");
+        LoadScene("Game", 1);
     }
 }
