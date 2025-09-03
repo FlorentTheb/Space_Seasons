@@ -73,8 +73,6 @@ public class AudioManager : MonoBehaviour
 
     private IEnumerator FadeMusicRoutine()
     {
-        Debug.Log($"Coroutine started ! IndexStart : {currentMusicIndex} | IndexTarget : {targetMusicIndex}");
-        Debug.Log($"Volume max : {TargetMusicVolume} | targetVolume = {Musics[targetMusicIndex].volume} | currentVolume = {Musics[currentMusicIndex].volume} | ");
         Musics[targetMusicIndex].Play();
         while (Musics[targetMusicIndex].volume < TargetMusicVolume || Musics[currentMusicIndex].volume > 0f)
         {

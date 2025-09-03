@@ -27,12 +27,17 @@ public class PlayerCollider : MonoBehaviour
         }
         else if (other.GetComponent<Checkpoint>() != null)
         {
+            Debug.Log("Checkpoint reached");
             if (ScoreManager.Instance.TotalPresentCollected == ScoreManager.Instance.minimumPresentsToCollect)
             {
+                Debug.Log("Check OK");
                 ScoreManager.Instance.IncreaseCollectablesAmountRequired();
             }
             else
+            {
+                Debug.Log("Check failed, Game Over !");
                 SceneController.Instance.LoadGameOver();
+            }
         }
     }
 }
