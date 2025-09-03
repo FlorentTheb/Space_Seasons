@@ -6,5 +6,6 @@ public class ControlHandling : StateMachineBehaviour
     {
         animator.SetBool("IsCrouching", false);
         animator.SetBool("IsJumping", false);
+        animator.SetBool("IsHit", false);
     }
 }

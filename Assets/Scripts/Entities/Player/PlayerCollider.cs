@@ -10,7 +10,7 @@ public class PlayerCollider : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<Obstacle>() != null)
+        if (other.GetComponent<Obstacle>() != null && !Player.Instance.IsInvicible)
         {
             HM.TakeDamage();
             ScoreManager.Instance.ResetCombo();

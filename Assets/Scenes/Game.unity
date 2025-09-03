@@ -188,8 +188,6 @@ MonoBehaviour:
   obstacleSpawnProbability: 0.6
   collectableSpawnProbability: 0.8
   bonusSpawnProbability: 0.1
-  CurrentSpeed: 0
-  totalDistance: 0
 --- !u!1 &79699399
 GameObject:
   m_ObjectHideFlags: 0
@@ -5958,7 +5956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2042833302
 MonoBehaviour:
   m_ObjectHideFlags: 0
