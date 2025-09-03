@@ -36,7 +36,7 @@ public class AudioManager : MonoBehaviour
     {
         for (int i = 0; i < Musics.Count; i++)
         {
-            var music = Musics[i];  
+            var music = Musics[i];
             music.loop = true;
             if (i == currentMusicIndex)
             {
@@ -67,6 +67,16 @@ public class AudioManager : MonoBehaviour
     public void PlayHit()
     {
         PlaySound(1);
+    }
+
+    public void PlayBonus()
+    {
+        PlaySound(2);
+    }
+
+    public void PlayCheckpoint()
+    {
+        PlaySound(3);
     }
 
     private void PlaySound(int soundIndex)

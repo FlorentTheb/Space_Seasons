@@ -25,6 +25,7 @@ public class PlayerCollider : MonoBehaviour
         else if (other.GetComponent<Magnet>() != null && !Player.Instance.IsMagnetOn)
         {
             other.transform.gameObject.SetActive(false);
+            AudioManager.Instance.PlayBonus();
             Player.Instance.ActivateMagnet();
         }
         else if (other.GetComponent<Checkpoint>() != null)
@@ -33,6 +34,7 @@ public class PlayerCollider : MonoBehaviour
             if (ScoreManager.Instance.TotalPresentCollected == ScoreManager.Instance.minimumPresentsToCollect)
             {
                 Debug.Log("Check OK");
+                AudioManager.Instance.PlayCheckpoint();
                 ScoreManager.Instance.IncreaseCollectablesAmountRequired();
             }
             else
