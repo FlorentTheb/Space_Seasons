@@ -10,11 +10,12 @@ public class Player : MonoBehaviour
     [SerializeField] private float InvincibilityTreshold = 3f;
     [SerializeField] private Material HealthyMaterial;
     [SerializeField] private Material DamagedMaterial;
+    [SerializeField] private Image MagnetTimerImage;
+    [SerializeField] private float MagnetTimer = 10f;
     private int CurrentHealth;
     private float InvincibilityTimer;
     public bool IsInvicible;
     public bool IsMagnetOn { get; private set; }
-    private float MagnetTimer = 10f;
 
     void Awake()
     {
@@ -28,17 +29,29 @@ public class Player : MonoBehaviour
         }
         InvincibilityTimer = 0f;
         IsInvicible = false;
+        IsMagnetOn = false;
+        MagnetTimerImage.transform.parent.gameObject.SetActive(false);
+        MagnetTimerImage.fillAmount = 1;
     }
 
     public void ActivateMagnet()
     {
+        MagnetTimerImage.transform.parent.gameObject.SetActive(true);
+        IsMagnetOn = true;
         StartCoroutine(MagnetCoroutine());
     }
     private IEnumerator MagnetCoroutine()
     {
-        IsMagnetOn = true;
-        yield return new WaitForSeconds(MagnetTimer);
+        float timer = 0f;
+        while (timer < MagnetTimer)
+        {
+            timer += Time.deltaTime;
+            MagnetTimerImage.fillAmount = 1f - (timer / MagnetTimer);
+            yield return null;
+        }
         IsMagnetOn = false;
+        MagnetTimerImage.transform.parent.gameObject.SetActive(false);
+        MagnetTimerImage.fillAmount = 1;
     }
 
     public void PlayerDamaged()
@@ -48,13 +61,9 @@ public class Player : MonoBehaviour
 
     private IEnumerator IsHittenCoroutine()
     {
-        if (transform.Find("Visual/Character/Body/Head").GetComponent<Renderer>().material != null)
-            Debug.Log("Render child found !");
-        else
-            Debug.Log("Render child NOT found !");
         transform.Find("Visual/Character/Body/Head").GetComponent<Renderer>().material = DamagedMaterial;
         IsInvicible = true;
-        Debug.Log("IsInvincible for 4 seconds !");
+        // Debug.Log("IsInvincible for 4 seconds !");
         yield return new WaitForSeconds(4);
         transform.Find("Visual/Character/Body/Head").GetComponent<Renderer>().material = HealthyMaterial;
         IsInvicible = false;
