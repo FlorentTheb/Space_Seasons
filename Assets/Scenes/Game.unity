@@ -4453,6 +4453,10 @@ PrefabInstance:
       propertyPath: MagnetTimerImage
       value: 
       objectReference: {fileID: 888727682}
+    - target: {fileID: 1625819284001650613, guid: c6881a334892b1345999d5c4169c9204, type: 3}
+      propertyPath: InvincibilityTimer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3621292784455317302, guid: c6881a334892b1345999d5c4169c9204, type: 3}
       propertyPath: HealthAmountImage
       value: 

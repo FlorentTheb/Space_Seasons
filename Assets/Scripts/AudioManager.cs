@@ -9,6 +9,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private List<AudioSource> Sounds;
     [SerializeField] private float fadeFactor = .2f;
     [SerializeField] private float TargetMusicVolume;
+    [SerializeField] private float TargetSFXVolume;
     [SerializeField] private int currentMusicIndex = 0;
     [SerializeField] private int targetMusicIndex = -1;
     private Coroutine fadeMusicRoutine;
@@ -20,8 +21,10 @@ public class AudioManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            float targetVolume = PlayerPrefs.GetFloat("Volume", 1f);
+            float targetVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
             SetMusicVolume(targetVolume);
+            targetVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+            SetSFXVolume(targetVolume);
         }
         else
         {
@@ -33,7 +36,7 @@ public class AudioManager : MonoBehaviour
     {
         for (int i = 0; i < Musics.Count; i++)
         {
-            var music = Musics[i];
+            var music = Musics[i];  
             music.loop = true;
             if (i == currentMusicIndex)
             {
@@ -79,6 +82,14 @@ public class AudioManager : MonoBehaviour
 
         for (int i = 0; i < Musics.Count; i++)
             Musics[i].volume = (i == targetMusicIndex) ? TargetMusicVolume : 0f;
+    }
+
+    public void SetSFXVolume(float newVolume)
+    {
+        TargetSFXVolume = Mathf.Clamp01(newVolume);
+
+        for (int i = 0; i < Sounds.Count; i++)
+            Sounds[i].volume = TargetSFXVolume;
     }
 
     public void CrossfadeMusic(int newMusicIndex)

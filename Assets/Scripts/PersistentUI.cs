@@ -12,7 +12,8 @@ public class PersistentUI : MonoBehaviour
     [Header("Settings UI")]
     public TMP_Dropdown resolutionDropdown;
     public Toggle fullscreenToggle;
-    public Slider VolumeMusicSlider;
+    public Slider MusicSlider;
+    public Slider SFXSlider;
 
     private Resolution[] resolutions = new Resolution[]
     {
@@ -51,13 +52,21 @@ public class PersistentUI : MonoBehaviour
 
         resolutionDropdown.onValueChanged.AddListener(SetResolution);
         fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
-        VolumeMusicSlider.onValueChanged.AddListener(SetMusicVolume);
+        MusicSlider.onValueChanged.AddListener(SetMusicVolume);
+        SFXSlider.onValueChanged.AddListener(SetSFXVolume);
 
-        if (PlayerPrefs.HasKey("Volume"))
+        if (PlayerPrefs.HasKey("MusicVolume"))
         {
-            float vol = PlayerPrefs.GetFloat("Volume");
-            VolumeMusicSlider.value = vol;
+            float vol = PlayerPrefs.GetFloat("MusicVolume");
+            MusicSlider.value = vol;
             SetMusicVolume(vol);
+        }
+
+        if (PlayerPrefs.HasKey("SFXVolume"))
+        {
+            float vol = PlayerPrefs.GetFloat("SFXVolume");
+            SFXSlider.value = vol;
+            SetSFXVolume(vol);
         }
     }
 
@@ -79,6 +88,12 @@ public class PersistentUI : MonoBehaviour
     public void SetMusicVolume(float vol)
     {
         AudioManager.Instance.SetMusicVolume(vol);
-        PlayerPrefs.SetFloat("Volume", vol);
+        PlayerPrefs.SetFloat("MusicVolume", vol);
+    }
+
+    public void SetSFXVolume(float vol)
+    {
+        AudioManager.Instance.SetSFXVolume(vol);
+        PlayerPrefs.SetFloat("SFXVolume", vol);
     }
 }
