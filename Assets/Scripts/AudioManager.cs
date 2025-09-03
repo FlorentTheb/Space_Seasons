@@ -11,8 +11,6 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private float TargetMusicVolume;
     [SerializeField] private int currentMusicIndex = 0;
     [SerializeField] private int targetMusicIndex = -1;
-    private int musicVolumeIn;
-    private int musicVolumeOut;
     private Coroutine fadeMusicRoutine;
 
     void Awake()
@@ -49,6 +47,30 @@ public class AudioManager : MonoBehaviour
                 music.volume = 0f;
             }
         }
+
+
+        for (int i = 0; i < Sounds.Count; i++)
+        {
+            var sound = Sounds[i];
+            sound.loop = false;
+        }
+    }
+
+    public void PlayCollect()
+    {
+        PlaySound(0);
+    }
+
+    public void PlayHit()
+    {
+        PlaySound(1);
+    }
+
+    private void PlaySound(int soundIndex)
+    {
+        Debug.Log($"Sound played | Index = {soundIndex}");
+        if (soundIndex >= 0 && soundIndex < Sounds.Count)
+            Sounds[soundIndex].Play();
     }
 
     public void SetMusicVolume(float newVolume)

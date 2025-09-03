@@ -13,11 +13,13 @@ public class PlayerCollider : MonoBehaviour
         if (other.GetComponent<Obstacle>() != null && !Player.Instance.IsInvicible)
         {
             HM.TakeDamage();
+            AudioManager.Instance.PlayHit();
             ScoreManager.Instance.ResetCombo();
         }
         else if (other.GetComponent<Collectable>() != null)
         {
             other.transform.gameObject.SetActive(false);
+            AudioManager.Instance.PlayCollect();
             ScoreManager.Instance.CollectPresent();
         }
         else if (other.GetComponent<Magnet>() != null && !Player.Instance.IsMagnetOn)
